@@ -5,6 +5,19 @@ using UnityEngine;
 
 public class SantaFe : MonoBehaviour
 {
+    class Node
+    {
+        public Node parent;
+        public List<Node> children;
+        public string value;
+        
+        public Node(string value)
+        {
+            this.value = value;
+            this.children = new List<Node> {};
+        }
+    }
+    
     private int[,] map;
     private int startX, startY, endX, endY;
 
