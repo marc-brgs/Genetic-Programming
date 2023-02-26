@@ -12,10 +12,11 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../../Algo-Gen/Algo-Gen/Assets/Scripts/GameManager.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../Algo-Gen/Algo-Gen/Assets/Scripts/Population.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Algo-Gen/Algo-Gen/Assets/Scripts/Population.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Ant.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/SantaFe.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../LINEL_BOURGEOIS_CHATEIGNER_PROGJVAVANCEE_4A/WaeJammersMCTS/Assets/Scripts/GameState.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../LINEL_BOURGEOIS_CHATEIGNER_PROGJVAVANCEE_4A/WaeJammersMCTS/Assets/Scripts/MCTSAgent.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../LINEL_BOURGEOIS_CHATEIGNER_PROGJVAVANCEE_4A/WaeJammersMCTS/Assets/Scripts/MCTSAgent.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -77,6 +78,7 @@
       <workItem from="1675347579975" duration="343000" />
       <workItem from="1675349424664" duration="3481000" />
       <workItem from="1677340097381" duration="2040000" />
+      <workItem from="1677418519942" duration="4960000" />
     </task>
     <servers />
   </component>

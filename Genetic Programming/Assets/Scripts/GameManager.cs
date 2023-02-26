@@ -2,27 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridManager : MonoBehaviour
-{
-    
-}
-
 public class GameManager : MonoBehaviour
 {
     private int[][] map;
     private int rows = 32;
     private int cols = 32;
     public Transform cam;
+    public Transform visualAnt;
     
-    //public Population population;
+    public Population population;
     public int populationSize;
     public int maxGenerations;
     public float mutationRate;
     public float crossoverRate;
-
     public float tournamentSelectionSize;
-    //private MazeGenerator mazeGenerator;
-    //private Maze maze;
 
     // Start is called before the first frame update
     void Start()
@@ -38,14 +31,10 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        GenerateGrid();
+        // Initialisation de la grille de jeu
+        GenerateGrid(); // map
 
-
-        /*// Initialisation de la grille de jeu
-        mazeGenerator = new MazeGenerator();
-        maze = mazeGenerator.GenerateMaze();
-
-        // Initialisation de la population
+        /*// Initialisation de la population
         population = new Population();
         for (int i = 0; i < populationSize; i++)
         {
@@ -59,18 +48,13 @@ public class GameManager : MonoBehaviour
         {
             // Evaluation de la population actuelle
             EvaluatePopulation();
-
-            // Sélection des parents pour la reproduction
-            List<Individual> parents = SelectParents();
-
-            // Création d'une nouvelle génération d'individus
-            List<Individual> newGeneration = Reproduce(parents);
-
-            // Application de la mutation
-            ApplyMutation(newGeneration);
-
-            // Remplacement de la population actuelle par la nouvelle génération
-            population.individuals = newGeneration;
+            
+            List<Individual> parents = SelectParents(); // Sélection des parents pour la reproduction
+            List<Individual> newGeneration = Reproduce(parents); // Création d'une nouvelle génération d'individus
+            
+            ApplyMutation(newGeneration); // Application de la mutation
+            
+            population.individuals = newGeneration; // Remplacement de la population actuelle par la nouvelle génération
         }
 
         // Sélection du meilleur individu
@@ -78,14 +62,40 @@ public class GameManager : MonoBehaviour
 
         // Affichage du comportement du meilleur individu dans le labyrinthe
         bestIndividual.behaviorTree.Execute(maze);*/
+        
+        Ant a = new Ant(0, 0);
+        a.direction = 1;
+        DisplayAnt(a);
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        
     }
 
+    void DisplayAnt(Ant ant)
+    {
+        visualAnt.position = new Vector2(ant.posX, ant.posY);
+        // rotation
+        if (ant.direction == 1) // top
+        {
+            visualAnt.eulerAngles = new Vector3(0, 0, -270);
+        }
+        else if (ant.direction == 2) // right
+        {
+            visualAnt.eulerAngles = new Vector3(0, 0, 0);
+        }
+        else if (ant.direction == 3) // bottom
+        {
+            visualAnt.eulerAngles = new Vector3(0, 0, -90);
+        }
+        else if (ant.direction == 4) // left
+        {
+            visualAnt.eulerAngles = new Vector3(0, 0, -180);
+        }
+    }
+    
     void GenerateGrid()
     {
         map[0][31] = 1;
@@ -273,9 +283,9 @@ public class GameManager : MonoBehaviour
         // Center camera to grid
         cam.transform.position = new Vector3((float)cols / 2 - 0.5f, (float)rows / 2 - 0.5f, -10);
     }
-}
-// Création d'un arbre de comportement aléatoire
-  /*  private BehaviorTree CreateRandomBehaviorTree()
+
+    // Création d'un arbre de comportement aléatoire
+    private BehaviorTree CreateRandomBehaviorTree()
     {
         // TODO : implémenter la création d'un arbre de comportement aléatoire
         return null;
@@ -287,13 +297,13 @@ public class GameManager : MonoBehaviour
         foreach (Individual individual in population.individuals)
         {
             // Exécution du labyrinthe avec le comportement de l'individu
-            float fitness = RunMazeWithBehaviorTree(maze, individual.behaviorTree);
+            float fitness = RunMazeWithBehaviorTree(map, individual.behaviorTree);
 
             // Stockage de la performance de l'individu
             individual.fitness = fitness;
         }
     }
-
+    
     // Sélection des parents pour la reproduction
     private List<Individual> SelectParents()
     {
@@ -336,26 +346,31 @@ public class GameManager : MonoBehaviour
     }
 
     // Exécution du labyrinthe avec un arbre de comportement donné
-    private float RunMazeWithBehaviorTree(Maze maze, BehaviorTree behaviorTree)
+    private float RunMazeWithBehaviorTree(int[][] map, BehaviorTree behaviorTree)
     {
-        // TODO : implémenter l'exécution du labyrinthe avec le comportement de l'arbre donné
-        return 0f;
+        if (behaviorTree.leftChild != null) RunMazeWithBehaviorTree(map, behaviorTree.leftChild);
+
+        
+        
+        if (behaviorTree.rightChild != null) RunMazeWithBehaviorTree(map, behaviorTree.rightChild);
+        
+        return 0f; // compter les passages sur la nourriture
     }
 }
 
 public class BehaviorTree
 {
     public BehaviorTree parent;
-    public List<BehaviorTree> children;
+    public BehaviorTree leftChild;
+    public BehaviorTree rightChild;
     public string value;
         
     public BehaviorTree(string value)
     {
         this.value = value;
-        this.children = new List<BehaviorTree> {};
     }
 
-    public Execute()
+    public void Execute()
     {
         
     }
@@ -370,4 +385,4 @@ public class Individual
 public class Population
 {
     public List<Individual> individuals;
-}*/
+}
