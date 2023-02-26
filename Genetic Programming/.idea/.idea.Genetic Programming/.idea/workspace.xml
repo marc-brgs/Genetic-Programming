@@ -79,7 +79,7 @@
       <workItem from="1675349424664" duration="3481000" />
       <workItem from="1677340097381" duration="2040000" />
       <workItem from="1677418519942" duration="15760000" />
-      <workItem from="1677434503296" duration="1350000" />
+      <workItem from="1677434503296" duration="6128000" />
     </task>
     <servers />
   </component>
@@ -102,24 +102,5 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Assets/Scripts/GameManager.cs</url>
-          <line>383</line>
-          <properties documentPath="C:\Users\marcb\Documents\Unity Projects\Genetic-Programming\Genetic Programming\Assets\Scripts\GameManager.cs" initialLine="382" containingFunctionPresentation="method 'EvaluateIndividual'">
-            <startOffsets>
-              <option value="10881" />
-            </startOffsets>
-            <endOffsets>
-              <option value="10897" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

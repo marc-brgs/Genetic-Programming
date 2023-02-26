@@ -33,6 +33,10 @@ public class GameManager : MonoBehaviour
         
         // Initialisation de la grille de jeu
         GenerateGrid(); // map
+
+        Individual test = new Individual();
+        test.behaviorTree = CreateRandomTree();
+        Debug.Log(test.behaviorTree.toString());
         
         Debug.Log("Init");
         
@@ -64,11 +68,11 @@ public class GameManager : MonoBehaviour
 
         // Sélection du meilleur individu
         Individual bestIndividual = GetBestIndividual(population.individuals);
-        //bestIndividual.behaviorTree.PrintPretty("", true);
-
+        Debug.Log(bestIndividual.behaviorTree.toString());
+        
         // Affichage du comportement du meilleur individu
         //bestIndividual.behaviorTree.Execute(map, ant, new List<string>());
-
+        
         /*Ant a = new Ant(0, 0);
         a.direction = 1;
         DisplayAnt(a);*/
@@ -320,8 +324,9 @@ public class GameManager : MonoBehaviour
     private float EvaluateIndividual(Individual individual)
     {
         // Reset de la fourmi
-        Ant ant = new Ant(0, 0);
-        ant.direction = 1;
+        Ant ant = new Ant(0, 31);
+        ant.direction = 1; // right
+        
         // Reset de la map
         int[][] originalMap = map;
         
@@ -336,11 +341,11 @@ public class GameManager : MonoBehaviour
             {
                 if (action == "TURN_LEFT") // tourner à gauche
                 {
-                    ant.direction = ant.direction - 1 % 4;
+                    ant.direction = mod(ant.direction - 1, 4);
                 }
                 else if (action == "TURN_RIGHT") // tourner à droite
                 {
-                    ant.direction = ant.direction + 1 % 4;
+                    ant.direction = mod(ant.direction + 1, 4);
                 }
                 else if (action == "MOVE_FORWARD") // avancer tout droit
                 {
@@ -360,13 +365,14 @@ public class GameManager : MonoBehaviour
                     {
                         ant.posX -= 1;
                     }
-                
-                    // Vérification de la position de la fourmi
-                    if (ant.posX < 0 || ant.posX >= cols || ant.posY < 0 || ant.posY >= rows)
-                    {
-                        break;
-                    }
+                    
+                    Debug.Log(ant.direction);
+                    // Correction de la position de la fourmi
+                    ant.posX = mod(ant.posX, 32);
+                    ant.posY = mod(ant.posY, 32);
 
+                    Debug.Log(ant.posX);
+                    Debug.Log(ant.posY);
                     // Vérification de la case sur laquelle se trouve la fourmi
                     if (map[ant.posX][ant.posY] == 1) // sur le chemin correct
                     {
@@ -380,7 +386,6 @@ public class GameManager : MonoBehaviour
                 }
             }
             
-
             DisplayAnt(ant);
         }
         
@@ -515,6 +520,21 @@ public class GameManager : MonoBehaviour
 
         return bestIndividual;
     }
+    
+    int mod(int x, int m) {
+        return (x%m + m)%m;
+    }
+}
+
+public class Population
+{
+    public List<Individual> individuals = new List<Individual>();
+}
+
+public class Individual
+{
+    public TreeNode behaviorTree;
+    public float fitness;
 }
 
 public class TreeNode
@@ -528,37 +548,40 @@ public class TreeNode
         this.action = action;
     }
     
-    public void PrintPretty(string indent, bool last)
+    public string toString(string indent="", string final="", bool last=true)
     {
-        Debug.Log(indent);
+        final += indent;
         if (last)
         {
-            Debug.Log("\\-");
+            final += "\\-";
             indent += "  ";
         }
         else
         {
-            Debug.Log("|-");
+            final += "|-";
             indent += "| ";
         }
-        Debug.Log(action);
+        final += action + "\n";
 
         for (int i = 0; i < children.Count; i++)
-            children[i].PrintPretty(indent, i == children.Count - 1);
+            final = children[i].toString(indent, final, i == children.Count - 1);
+
+        return final;
     }
     
     // Retourne l'action à effectuer en fonction de la map, la fourmi et l'arbre
     public List<string> Execute(int[][] map, Ant ant, List<string> actionList)
     {
+
         switch (action)
         {
             case "TURN_LEFT":
                 actionList.Add(action);
-                ant.direction = ant.direction - 1 % 4;
+                ant.direction = mod(ant.direction - 1, 4);
                 break;
             case "TURN_RIGHT":
                 actionList.Add(action);
-                ant.direction = ant.direction + 1 % 4;
+                ant.direction = mod(ant.direction + 1, 4);
                 break;
             case "MOVE_FORWARD":
                 if (ant.direction == 0 && ant.posY < 31) // top
@@ -589,25 +612,30 @@ public class TreeNode
 
                 int posX = ant.posX;
                 int posY = ant.posY;
+
                 if (ant.direction == 0 && posY < 31 && map[posX][posY + 1] == 2) // UP direction
                 {
-                    actionList.AddRange(leftNode.Execute(map, ant, actionList));
+                    Debug.Log("food detected");
+                    actionList = leftNode.Execute(map, ant, actionList);
                 }
                 else if (ant.direction == 1 && posX < 31 && map[posX + 1][posY] == 2) // RIGHT direction
                 {
-                    actionList.AddRange(leftNode.Execute(map, ant, actionList));
+                    Debug.Log("food detected");
+                    actionList = leftNode.Execute(map, ant, actionList);
                 }
                 else if (ant.direction == 2 && posY > 0 && map[posX][posY - 1] == 2) // BOTTOM direction
                 {
-                    actionList.AddRange(leftNode.Execute(map, ant, actionList));
+                    Debug.Log("food detected");
+                    actionList = leftNode.Execute(map, ant, actionList);
                 }
                 else if (ant.direction == 3 && posX > 0 && map[posX - 1][posY] == 2) // LEFT direction
                 {
-                    actionList.AddRange(leftNode.Execute(map, ant, actionList));
+                    Debug.Log("food detected");
+                    actionList = leftNode.Execute(map, ant, actionList);
                 }
                 else
                 {
-                    actionList.AddRange(rightNode.Execute(map, ant, actionList));
+                    actionList = rightNode.Execute(map, ant, actionList);
                 }
 
                 break;
@@ -617,23 +645,16 @@ public class TreeNode
                 TreeNode leftNode = children[0];
                 TreeNode rightNode = children[1];
 
-                actionList.AddRange(leftNode.Execute(map, ant, actionList));
-                actionList.AddRange(rightNode.Execute(map, ant, actionList));
+                actionList = leftNode.Execute(map, ant, actionList);
+                actionList = rightNode.Execute(map, ant, actionList);
                 break;
             }
         }
 
         return actionList;
     }
-}
-
-public class Individual
-{
-    public TreeNode behaviorTree;
-    public float fitness;
-}
-
-public class Population
-{
-    public List<Individual> individuals = new List<Individual>();
+    
+    int mod(int x, int m) {
+        return (x%m + m)%m;
+    }
 }
