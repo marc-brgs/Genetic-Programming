@@ -33,16 +33,19 @@ public class GameManager : MonoBehaviour
         
         // Initialisation de la grille de jeu
         GenerateGrid(); // map
-
-        /*// Initialisation de la population
+        
+        Debug.Log("Init");
+        
+        // Initialisation de la population
         population = new Population();
         for (int i = 0; i < populationSize; i++)
         {
             Individual individual = new Individual();
-            individual.behaviorTree = CreateRandomBehaviorTree();
+            individual.behaviorTree = CreateRandomTree();
             population.individuals.Add(individual);
         }
-
+        
+        Debug.Log("Gen loop");
         // Boucle principale de l'algorithme génétique
         for (int generation = 0; generation < maxGenerations; generation++)
         {
@@ -50,52 +53,49 @@ public class GameManager : MonoBehaviour
             EvaluatePopulation();
             
             List<Individual> parents = SelectParents(); // Sélection des parents pour la reproduction
-            List<Individual> newGeneration = Reproduce(parents); // Création d'une nouvelle génération d'individus
+            List<Individual> newGeneration = Crossover(parents); // Création d'une nouvelle génération d'individus
             
-            ApplyMutation(newGeneration); // Application de la mutation
+            //ApplyMutation(newGeneration); // Application de la mutation
             
             population.individuals = newGeneration; // Remplacement de la population actuelle par la nouvelle génération
+            
+            Debug.Log("Gen : " + generation);
         }
 
         // Sélection du meilleur individu
-        Individual bestIndividual = GetBestIndividual();
+        Individual bestIndividual = GetBestIndividual(population.individuals);
+        //bestIndividual.behaviorTree.PrintPretty("", true);
 
-        // Affichage du comportement du meilleur individu dans le labyrinthe
-        bestIndividual.behaviorTree.Execute(maze);*/
-        
-        Ant a = new Ant(0, 0);
+        // Affichage du comportement du meilleur individu
+        //bestIndividual.behaviorTree.Execute(map, ant, new List<string>());
+
+        /*Ant a = new Ant(0, 0);
         a.direction = 1;
-        DisplayAnt(a);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        DisplayAnt(a);*/
     }
 
     void DisplayAnt(Ant ant)
     {
         visualAnt.position = new Vector2(ant.posX, ant.posY);
         // rotation
-        if (ant.direction == 1) // top
+        if (ant.direction == 0) // top
         {
             visualAnt.eulerAngles = new Vector3(0, 0, -270);
         }
-        else if (ant.direction == 2) // right
+        else if (ant.direction == 1) // right
         {
             visualAnt.eulerAngles = new Vector3(0, 0, 0);
         }
-        else if (ant.direction == 3) // bottom
+        else if (ant.direction == 2) // bottom
         {
             visualAnt.eulerAngles = new Vector3(0, 0, -90);
         }
-        else if (ant.direction == 4) // left
+        else if (ant.direction == 3) // left
         {
             visualAnt.eulerAngles = new Vector3(0, 0, -180);
         }
     }
-    
+
     void GenerateGrid()
     {
         map[0][31] = 1;
@@ -285,56 +285,227 @@ public class GameManager : MonoBehaviour
     }
 
     // Création d'un arbre de comportement aléatoire
-    private BehaviorTree CreateRandomBehaviorTree()
+    private TreeNode CreateRandomTree()
     {
-        // TODO : implémenter la création d'un arbre de comportement aléatoire
-        return null;
+        // Création de l'arbre de comportement aléatoire
+        TreeNode root = new TreeNode("PROGN2");
+
+        TreeNode seq1 = new TreeNode("PROGN2");
+        seq1.children.Add(new TreeNode("IS_FOOD"));
+        seq1.children.Add(new TreeNode("MOVE_FORWARD"));
+        seq1.children[0].children.Add(new TreeNode("MOVE_FORWARD"));
+        seq1.children[0].children.Add(new TreeNode("TURN_RIGHT"));
+
+        TreeNode seq2 = new TreeNode("IS_FOOD");
+        seq2.children.Add(new TreeNode("TURN_LEFT"));
+        seq2.children.Add(new TreeNode("MOVE_FORWARD"));
+
+        root.children.Add(seq1);
+        root.children.Add(seq2);
+        
+        return root;
     }
 
     // Evaluation de la population actuelle
     private void EvaluatePopulation()
     {
-        foreach (Individual individual in population.individuals)
+        for (int i = 0; i < populationSize; i++)
         {
-            // Exécution du labyrinthe avec le comportement de l'individu
-            float fitness = RunMazeWithBehaviorTree(map, individual.behaviorTree);
-
-            // Stockage de la performance de l'individu
+            Individual individual = population.individuals[i];
+            float fitness = EvaluateIndividual(individual);
             individual.fitness = fitness;
         }
     }
-    
+
+    private float EvaluateIndividual(Individual individual)
+    {
+        // Reset de la fourmi
+        Ant ant = new Ant(0, 0);
+        ant.direction = 1;
+        // Reset de la map
+        int[][] originalMap = map;
+        
+        float score = 0;
+        
+        
+        for (int i = 0; i < 200; i++) // boucle de 200 pas maximum
+        {
+            List<string> actions = individual.behaviorTree.Execute(originalMap, ant, new List<string>());
+
+            foreach (string action in actions)
+            {
+                if (action == "TURN_LEFT") // tourner à gauche
+                {
+                    ant.direction = ant.direction - 1 % 4;
+                }
+                else if (action == "TURN_RIGHT") // tourner à droite
+                {
+                    ant.direction = ant.direction + 1 % 4;
+                }
+                else if (action == "MOVE_FORWARD") // avancer tout droit
+                {
+                    if (ant.direction == 0) // top
+                    {
+                        ant.posY += 1;
+                    }
+                    if (ant.direction == 1) // right
+                    {
+                        ant.posX += 1;
+                    }
+                    if (ant.direction == 2) // bottom
+                    {
+                        ant.posY -= 1;
+                    }
+                    if (ant.direction == 3) // left
+                    {
+                        ant.posX -= 1;
+                    }
+                
+                    // Vérification de la position de la fourmi
+                    if (ant.posX < 0 || ant.posX >= cols || ant.posY < 0 || ant.posY >= rows)
+                    {
+                        break;
+                    }
+
+                    // Vérification de la case sur laquelle se trouve la fourmi
+                    if (map[ant.posX][ant.posY] == 1) // sur le chemin correct
+                    {
+                        score++;
+                    }
+                    else if (map[ant.posX][ant.posY] == 2) // nourriture trouvée
+                    {
+                        score += 10;
+                        map[ant.posX][ant.posY] = 0;
+                    }
+                }
+            }
+            
+
+            DisplayAnt(ant);
+        }
+        
+        return score;
+    }
+
     // Sélection des parents pour la reproduction
     private List<Individual> SelectParents()
     {
         List<Individual> parents = new List<Individual>();
+        
+        for (int i = 0; i < populationSize; i++)
+        {
+            Individual parent1 = TournamentSelection();
+            Individual parent2 = TournamentSelection();
 
-        // TODO : implémenter la sélection des parents à l'aide d'un tournoi de sélection
+            parents.Add(parent1);
+            parents.Add(parent2);
+        }
 
         return parents;
     }
+    
+    private Individual TournamentSelection()
+    {
+        List<Individual> tournamentPopulation = new List<Individual>();
 
+        for (int i = 0; i < tournamentSelectionSize; i++)
+        {
+            int randomIndex = Random.Range(0, population.individuals.Count);
+            tournamentPopulation.Add(population.individuals[randomIndex]);
+        }
+
+        return GetBestIndividual(tournamentPopulation);
+    }
+    
     // Création d'une nouvelle génération d'individus
-    private List<Individual> Reproduce(List<Individual> parents)
+    private List<Individual> Crossover(List<Individual> parents)
     {
         List<Individual> newGeneration = new List<Individual>();
 
-        // TODO : implémenter la reproduction des parents pour créer une nouvelle génération d'individus
+        Individual parent1 = parents[0];
+        Individual parent2 = parents[1];
+        
+        for (int i = 0; i < populationSize; i++)
+        {
+            Individual child = new Individual();
+            
+            TreeNode newRoot = CrossoverNodes(parent1.behaviorTree, parent2.behaviorTree);
+            child.behaviorTree = newRoot;
+            
+            newGeneration.Add(child);
+        }
 
         return newGeneration;
     }
 
-    // Application de la mutation
-    private void ApplyMutation(List<Individual> newGeneration)
+    private TreeNode CrossoverNodes(TreeNode node1, TreeNode node2)
     {
-        // TODO : implémenter l'application de la mutation sur la nouvelle génération
+        // On clone un des deux parents pour obtenir un nouvel arbre
+        TreeNode newNode = new TreeNode(node1.action);
+        
+        // Si les deux parents ont des enfants, on choisit aléatoirement un point de croisement
+        if (node1.children.Count > 0 && node2.children.Count > 0)
+        {
+            int crossoverPoint1 = UnityEngine.Random.Range(0, node1.children.Count);
+            int crossoverPoint2 = UnityEngine.Random.Range(0, node2.children.Count);
+
+            // On croise les sous-arbres correspondants aux deux points de croisement
+            TreeNode child1 = CrossoverNodes(node1.children[crossoverPoint1], node2.children[crossoverPoint2]);
+            TreeNode child2 = CrossoverNodes(node2.children[crossoverPoint2], node1.children[crossoverPoint1]);
+
+            // On ajoute les nouveaux enfants au nouvel arbre
+            newNode.children.Add(child1);
+            newNode.children.Add(child2);
+
+            // On met à jour les parents des enfants
+            child1.parent = newNode;
+            child2.parent = newNode;
+        }
+        // Si un des deux parents n'a pas d'enfant, on recopie directement les enfants du parent qui en a
+        else if (node1.children.Count > 0)
+        {
+            foreach (TreeNode childNode in node1.children)
+            {
+                TreeNode child = CrossoverNodes(childNode, childNode);
+                newNode.children.Add(child);
+                child.parent = newNode;
+            }
+        }
+        else if (node2.children.Count > 0)
+        {
+            foreach (TreeNode childNode in node2.children)
+            {
+                TreeNode child = CrossoverNodes(childNode, childNode);
+                newNode.children.Add(child);
+                child.parent = newNode;
+            }
+        }
+
+        return newNode;
+    }
+    
+    // Application de la mutation
+    private void ApplyMutation(List<Individual> individuals)
+    {
+        for (int i = 0; i < individuals.Count; i++)
+        {
+            if (Random.value < mutationRate)
+            {
+                Mutate(individuals[i]);
+            }
+        }
     }
 
-    private Individual GetBestIndividual()
+    private void Mutate(Individual individual)
     {
-        Individual bestIndividual = population.individuals[0];
+        // TODO : implémenter la méthode de mutation d'un arbre de comportement
+    }
+    
+    private Individual GetBestIndividual(List<Individual> individuals)
+    {
+        Individual bestIndividual = individuals[0];
 
-        foreach (Individual individual in population.individuals)
+        foreach (Individual individual in individuals)
         {
             if (individual.fitness > bestIndividual.fitness)
             {
@@ -344,45 +515,125 @@ public class GameManager : MonoBehaviour
 
         return bestIndividual;
     }
-
-    // Exécution du labyrinthe avec un arbre de comportement donné
-    private float RunMazeWithBehaviorTree(int[][] map, BehaviorTree behaviorTree)
-    {
-        if (behaviorTree.leftChild != null) RunMazeWithBehaviorTree(map, behaviorTree.leftChild);
-
-        
-        
-        if (behaviorTree.rightChild != null) RunMazeWithBehaviorTree(map, behaviorTree.rightChild);
-        
-        return 0f; // compter les passages sur la nourriture
-    }
 }
 
-public class BehaviorTree
+public class TreeNode
 {
-    public BehaviorTree parent;
-    public BehaviorTree leftChild;
-    public BehaviorTree rightChild;
-    public string value;
-        
-    public BehaviorTree(string value)
+    public TreeNode parent;
+    public List<TreeNode> children = new List<TreeNode>();
+    public string action;
+    
+    public TreeNode(string action)
     {
-        this.value = value;
+        this.action = action;
     }
-
-    public void Execute()
+    
+    public void PrintPretty(string indent, bool last)
     {
-        
+        Debug.Log(indent);
+        if (last)
+        {
+            Debug.Log("\\-");
+            indent += "  ";
+        }
+        else
+        {
+            Debug.Log("|-");
+            indent += "| ";
+        }
+        Debug.Log(action);
+
+        for (int i = 0; i < children.Count; i++)
+            children[i].PrintPretty(indent, i == children.Count - 1);
+    }
+    
+    // Retourne l'action à effectuer en fonction de la map, la fourmi et l'arbre
+    public List<string> Execute(int[][] map, Ant ant, List<string> actionList)
+    {
+        switch (action)
+        {
+            case "TURN_LEFT":
+                actionList.Add(action);
+                ant.direction = ant.direction - 1 % 4;
+                break;
+            case "TURN_RIGHT":
+                actionList.Add(action);
+                ant.direction = ant.direction + 1 % 4;
+                break;
+            case "MOVE_FORWARD":
+                if (ant.direction == 0 && ant.posY < 31) // top
+                {
+                    ant.posY += 1;
+                    actionList.Add(action);
+                }
+                if (ant.direction == 1 && ant.posX < 31) // right
+                {
+                    ant.posX += 1;
+                    actionList.Add(action);
+                }
+                if (ant.direction == 2 && ant.posY > 0) // bottom
+                {
+                    ant.posY -= 1;
+                    actionList.Add(action);
+                }
+                if (ant.direction == 3 && ant.posX > 0) // left
+                {
+                    ant.posX -= 1;
+                    actionList.Add(action);
+                }
+                break;
+            case "IS_FOOD":
+            {
+                TreeNode leftNode = children[0];
+                TreeNode rightNode = children[1];
+
+                int posX = ant.posX;
+                int posY = ant.posY;
+                if (ant.direction == 0 && posY < 31 && map[posX][posY + 1] == 2) // UP direction
+                {
+                    actionList.AddRange(leftNode.Execute(map, ant, actionList));
+                }
+                else if (ant.direction == 1 && posX < 31 && map[posX + 1][posY] == 2) // RIGHT direction
+                {
+                    actionList.AddRange(leftNode.Execute(map, ant, actionList));
+                }
+                else if (ant.direction == 2 && posY > 0 && map[posX][posY - 1] == 2) // BOTTOM direction
+                {
+                    actionList.AddRange(leftNode.Execute(map, ant, actionList));
+                }
+                else if (ant.direction == 3 && posX > 0 && map[posX - 1][posY] == 2) // LEFT direction
+                {
+                    actionList.AddRange(leftNode.Execute(map, ant, actionList));
+                }
+                else
+                {
+                    actionList.AddRange(rightNode.Execute(map, ant, actionList));
+                }
+
+                break;
+            }
+            case "PROGN2":
+            {
+                TreeNode leftNode = children[0];
+                TreeNode rightNode = children[1];
+
+                actionList.AddRange(leftNode.Execute(map, ant, actionList));
+                actionList.AddRange(rightNode.Execute(map, ant, actionList));
+                break;
+            }
+        }
+
+        return actionList;
     }
 }
 
 public class Individual
 {
-    public BehaviorTree behaviorTree;
+    public TreeNode behaviorTree;
     public float fitness;
 }
 
 public class Population
 {
-    public List<Individual> individuals;
+    public List<Individual> individuals = new List<Individual>();
 }

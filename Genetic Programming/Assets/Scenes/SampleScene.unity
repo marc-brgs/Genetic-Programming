@@ -178,6 +178,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ant
       objectReference: {fileID: 0}
+    - target: {fileID: 2261769007202815280, guid: cccbc60288db5be42b4771d994885aba, type: 3}
+      propertyPath: m_LocalAABB.m_Center.x
+      value: 0.05575216
+      objectReference: {fileID: 0}
+    - target: {fileID: 2261769007202815280, guid: cccbc60288db5be42b4771d994885aba, type: 3}
+      propertyPath: m_LocalAABB.m_Center.y
+      value: -0.000000059604645
+      objectReference: {fileID: 0}
+    - target: {fileID: 2261769007202815280, guid: cccbc60288db5be42b4771d994885aba, type: 3}
+      propertyPath: m_LocalAABB.m_Extent.x
+      value: 0.42091745
+      objectReference: {fileID: 0}
+    - target: {fileID: 2261769007202815280, guid: cccbc60288db5be42b4771d994885aba, type: 3}
+      propertyPath: m_LocalAABB.m_Extent.y
+      value: 0.6651648
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cccbc60288db5be42b4771d994885aba, type: 3}
 --- !u!1 &519420028
@@ -296,11 +312,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 519420032}
   visualAnt: {fileID: 2069302858}
-  populationSize: 0
-  maxGenerations: 0
-  mutationRate: 0
-  crossoverRate: 0
-  tournamentSelectionSize: 0
+  populationSize: 20
+  maxGenerations: 100
+  mutationRate: 1
+  crossoverRate: 1
+  tournamentSelectionSize: 5
 --- !u!4 &581732406
 Transform:
   m_ObjectHideFlags: 0
