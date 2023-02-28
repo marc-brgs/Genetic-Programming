@@ -103,7 +103,7 @@ public class GameManager : MonoBehaviour
         if (animationsBuffer.Count > 0)
         {
             string action = animationsBuffer[0];
-            Debug.Log(action);
+            
             switch (action)
             {
                 case "TURN_LEFT":
