@@ -126,13 +126,13 @@ public class GameManager : MonoBehaviour
         map[12][24] = 1;
         map[12][23] = 1;
         map[12][22] = 1;
-        map[12][21] = 1;
+        map[12][21] = 2;
         map[12][20] = 1;
         map[12][19] = 1;
         map[12][18] = 1;
         map[12][17] = 1;
-        map[12][16] = 1;
-        map[12][15] = 1;
+        map[12][16] = 2;
+        map[12][15] = 2;
         map[12][14] = 1;
         map[12][13] = 1;
         map[12][12] = 1;
@@ -140,38 +140,38 @@ public class GameManager : MonoBehaviour
         map[12][10] = 1;
         map[12][9] = 1;
         map[12][8] = 1;
-        map[12][7] = 1;
+        map[12][7] = 2;
         
         map[11][7] = 1;
         map[10][7] = 1;
         map[9][7] = 1;
         map[8][7] = 1;
         map[7][7] = 1;
-        map[6][7] = 1;
-        map[5][7] = 1;
+        map[6][7] = 2;
+        map[5][7] = 2;
         map[4][7] = 1;
         map[3][7] = 1;
-        map[2][7] = 1;
-        map[1][7] = 1;
+        map[2][7] = 2;
+        map[1][7] = 2;
         
         map[1][6] = 1;
         map[1][5] = 1;
         map[1][4] = 1;
         map[1][3] = 1;
-        map[1][2] = 1;
-        map[1][1] = 1;
+        map[1][2] = 2;
+        map[1][1] = 2;
         
         map[1][1] = 1;
         map[2][1] = 1;
         map[3][1] = 1;
         map[4][1] = 1;
         map[5][1] = 1;
-        map[6][1] = 1;
-        map[7][1] = 1;
+        map[6][1] = 2;
+        map[7][1] = 2;
         
         map[7][2] = 1;
         map[7][3] = 1;
-        map[7][4] = 1;
+        map[7][4] = 2;
         
         map[8][4] = 1;
         map[9][4] = 1;
@@ -180,94 +180,92 @@ public class GameManager : MonoBehaviour
         map[12][4] = 1;
         map[13][4] = 1;
         map[14][4] = 1;
-        map[15][4] = 1;
-        map[16][4] = 1;
+        map[15][4] = 2;
+        map[16][4] = 2;
         
-        map[16][4] = 1;
         map[16][5] = 1;
         map[16][6] = 1;
         map[16][7] = 1;
-        map[16][8] = 1;
-        map[16][9] = 1;
+        map[16][8] = 2;
+        map[16][9] = 2;
         map[16][10] = 1;
         map[16][11] = 1;
         map[16][12] = 1;
         map[16][13] = 1;
-        map[16][14] = 1;
-        map[16][15] = 1;
-        map[16][16] = 1;
+        map[16][14] = 2;
+        map[16][15] = 2;
+        map[16][16] = 2;
         
         map[17][16] = 1;
-        map[18][16] = 1;
-        map[19][16] = 1;
-        map[20][16] = 1;
+        map[18][16] = 2;
+        map[19][16] = 2;
+        map[20][16] = 2;
         
         map[20][17] = 1;
         map[20][18] = 1;
-        map[20][19] = 1;
-        map[20][20] = 1;
+        map[20][19] = 2;
+        map[20][20] = 2;
         map[20][21] = 1;
         map[20][22] = 1;
         map[20][23] = 1;
         map[20][24] = 1;
-        map[20][25] = 1;
-        map[20][26] = 1;
+        map[20][25] = 2;
+        map[20][26] = 2;
         
         map[21][26] = 1;
         map[22][26] = 1;
-        map[23][26] = 1;
-        map[24][26] = 1;
+        map[23][26] = 2;
+        map[24][26] = 2;
         
         map[24][27] = 1;
         map[24][28] = 1;
-        map[24][29] = 1;
+        map[24][29] = 2;
         
         map[25][29] = 1;
         map[26][29] = 1;
         map[27][29] = 1;
-        map[28][29] = 1;
-        map[29][29] = 1;
+        map[28][29] = 2;
+        map[29][29] = 2;
         
         map[29][28] = 1;
         map[29][27] = 1;
-        map[29][26] = 1;
+        map[29][26] = 2;
         map[29][25] = 1;
-        map[29][24] = 1;
-        map[29][23] = 1;
+        map[29][24] = 2;
+        map[29][23] = 2;
         map[29][22] = 1;
-        map[29][21] = 1;
-        map[29][20] = 1;
+        map[29][21] = 2;
+        map[29][20] = 2;
         map[29][19] = 1;
-        map[29][18] = 1;
-        map[29][17] = 1;
+        map[29][18] = 2;
+        map[29][17] = 2;
         
         map[28][17] = 1;
         map[27][17] = 1;
         map[26][17] = 1;
-        map[25][17] = 1;
-        map[24][17] = 1;
-        map[23][17] = 1;
+        map[25][17] = 2;
+        map[24][17] = 2;
+        map[23][17] = 2;
 
         map[23][16] = 1;
-        map[23][15] = 1;
-        map[23][14] = 1;
-        map[23][13] = 1;
+        map[23][15] = 2;
+        map[23][14] = 2;
+        map[23][13] = 2;
         
         map[24][13] = 1;
-        map[25][13] = 1;
-        map[26][13] = 1;
-        map[27][13] = 1;
+        map[25][13] = 2;
+        map[26][13] = 2;
+        map[27][13] = 2;
         
-        map[27][13] = 1;
         map[27][12] = 1;
-        map[27][11] = 1;
-        map[27][10] = 1;
-        map[27][9] = 1;
+        map[27][11] = 2;
+        map[27][10] = 2;
+        map[27][9] = 2;
         
         map[26][9] = 1;
-        map[25][9] = 1;
-        map[24][9] = 1;
-        map[23][9] = 1;
+        map[25][9] = 2;
+        map[24][9] = 2;
+        map[23][9] = 2;
         
         map[23][8] = 1;
         
@@ -349,30 +347,27 @@ public class GameManager : MonoBehaviour
                 }
                 else if (action == "MOVE_FORWARD") // avancer tout droit
                 {
-                    if (ant.direction == 0) // top
+                    if (ant.direction == 0 && ant.posY+1 < 32) // top
                     {
                         ant.posY += 1;
                     }
-                    if (ant.direction == 1) // right
+                    if (ant.direction == 1 && ant.posX+1 < 32) // right
                     {
                         ant.posX += 1;
                     }
-                    if (ant.direction == 2) // bottom
+                    if (ant.direction == 2 && ant.posY-1 >= 0) // bottom
                     {
                         ant.posY -= 1;
                     }
-                    if (ant.direction == 3) // left
+                    if (ant.direction == 3 && ant.posX-1 >= 0) // left
                     {
                         ant.posX -= 1;
                     }
                     
-                    Debug.Log(ant.direction);
                     // Correction de la position de la fourmi
-                    ant.posX = mod(ant.posX, 32);
-                    ant.posY = mod(ant.posY, 32);
+                    //ant.posX = mod(ant.posX, 32);
+                    //ant.posY = mod(ant.posY, 32);
 
-                    Debug.Log(ant.posX);
-                    Debug.Log(ant.posY);
                     // Vérification de la case sur laquelle se trouve la fourmi
                     if (map[ant.posX][ant.posY] == 1) // sur le chemin correct
                     {
