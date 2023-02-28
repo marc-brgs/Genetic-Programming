@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +18,12 @@ public class GameManager : MonoBehaviour
     public float mutationRate;
     public float crossoverRate;
     public float tournamentSelectionSize;
+
+    private int animated = 0;
+    private Ant antToAnimate;
+    private Ant ant2;
+    private Individual individualToAnimate;
+    private List<string> animationsBuffer;
 
     // Start is called before the first frame update
     void Start()
@@ -73,9 +81,59 @@ public class GameManager : MonoBehaviour
         // Affichage du comportement du meilleur individu
         //bestIndividual.behaviorTree.Execute(map, ant, new List<string>());
         
-        /*Ant a = new Ant(0, 0);
-        a.direction = 1;
-        DisplayAnt(a);*/
+        Ant a = new Ant(0, 31);
+        DisplayAnt(a);
+
+        individualToAnimate = bestIndividual;
+        individualToAnimate.behaviorTree = CreateSantaFeTree();
+        Debug.Log(individualToAnimate.behaviorTree.toString());
+        antToAnimate = a;
+        ant2 = new Ant(0, 31);
+        animationsBuffer = new List<string>();
+    }
+
+    private void FixedUpdate()
+    {
+        if (animated < 100)
+        {
+            animationsBuffer.AddRange(individualToAnimate.behaviorTree.Execute(map, antToAnimate, new List<string>()));
+            animated++;
+        }
+
+        if (animationsBuffer.Count > 0)
+        {
+            string action = animationsBuffer[0];
+            Debug.Log(action);
+            switch (action)
+            {
+                case "TURN_LEFT":
+                    ant2.direction = mod(ant2.direction - 1, 4);
+                    break;
+                case "TURN_RIGHT":
+                    ant2.direction = mod(ant2.direction + 1, 4);
+                    break;
+                case "MOVE_FORWARD":
+                    if (ant2.direction == 0 && ant2.posY+1 < 32) // top
+                    {
+                        ant2.posY += 1;
+                    }
+                    if (ant2.direction == 1 && ant2.posX+1 < 32) // right
+                    {
+                        ant2.posX += 1;
+                    }
+                    if (ant2.direction == 2 && ant2.posY-1 >= 0) // bottom
+                    {
+                        ant2.posY -= 1;
+                    }
+                    if (ant2.direction == 3 && ant2.posX-1 >= 0) // left
+                    {
+                        ant2.posX -= 1;
+                    }
+                    break;
+            }
+            animationsBuffer.RemoveAt(0);
+            DisplayAnt(ant2);
+        }
     }
 
     void DisplayAnt(Ant ant)
@@ -308,6 +366,65 @@ public class GameManager : MonoBehaviour
         return root;
     }
 
+    private TreeNode CreateSantaFeTree()
+    {
+        TreeNode n1 = new TreeNode("IS_FOOD");
+        TreeNode n2 = new TreeNode("MOVE_FORWARD");
+        TreeNode n3 = new TreeNode("PROGN3");
+        TreeNode n4 = new TreeNode("TURN_LEFT");
+        TreeNode n5 = new TreeNode("PROGN2");
+        TreeNode n6 = new TreeNode("IS_FOOD");
+        TreeNode n7 = new TreeNode("MOVE_FORWARD");
+        TreeNode n8 = new TreeNode("TURN_RIGHT");
+        TreeNode n9 = new TreeNode("PROGN2");
+        TreeNode n10 = new TreeNode("TURN_RIGHT");
+        TreeNode n11 = new TreeNode("PROGN2");
+        TreeNode n12 = new TreeNode("TURN_LEFT");
+        TreeNode n13 = new TreeNode("TURN_RIGHT");
+        TreeNode n14 = new TreeNode("PROGN2");
+        TreeNode n15 = new TreeNode("IS_FOOD");
+        TreeNode n16 = new TreeNode("MOVE_FORWARD");
+        TreeNode n17 = new TreeNode("TURN_LEFT");
+        TreeNode n18 = new TreeNode("MOVE_FORWARD");
+
+        n1.children.Add(n2);
+        n1.children.Add(n3);
+        
+        n3.children.Add(n4);
+        n3.children.Add(n5);
+        n3.children.Add(n14);
+        
+        n5.children.Add(n6);
+        n5.children.Add(n9);
+        
+        n6.children.Add(n7);
+        n6.children.Add(n8);
+        
+        n9.children.Add(n10);
+        n9.children.Add(n11);
+        
+        n11.children.Add(n12);
+        n11.children.Add(n13);
+        
+        n14.children.Add(n15);
+        n14.children.Add(n18);
+        
+        n15.children.Add(n16);
+        n15.children.Add(n17);
+        return n1;
+    }
+
+    TreeNode createEasyTree()
+    {
+        TreeNode n1 = new TreeNode("IS_FOOD");
+        TreeNode n2 = new TreeNode("MOVE_FORWARD");
+        TreeNode n3 = new TreeNode("TURN_LEFT");
+        
+        n1.children.Add(n2);
+        n1.children.Add(n3);
+        return n1;
+    }
+    
     // Evaluation de la population actuelle
     private void EvaluatePopulation()
     {
@@ -323,8 +440,7 @@ public class GameManager : MonoBehaviour
     {
         // Reset de la fourmi
         Ant ant = new Ant(0, 31);
-        ant.direction = 1; // right
-        
+
         // Reset de la map
         int[][] originalMap = map;
         
@@ -579,22 +695,22 @@ public class TreeNode
                 ant.direction = mod(ant.direction + 1, 4);
                 break;
             case "MOVE_FORWARD":
-                if (ant.direction == 0 && ant.posY < 31) // top
+                if (ant.direction == 0 && ant.posY+1 < 32) // top
                 {
                     ant.posY += 1;
                     actionList.Add(action);
                 }
-                if (ant.direction == 1 && ant.posX < 31) // right
+                if (ant.direction == 1 && ant.posX+1 < 32) // right
                 {
                     ant.posX += 1;
                     actionList.Add(action);
                 }
-                if (ant.direction == 2 && ant.posY > 0) // bottom
+                if (ant.direction == 2 && ant.posY-1 >= 0) // bottom
                 {
                     ant.posY -= 1;
                     actionList.Add(action);
                 }
-                if (ant.direction == 3 && ant.posX > 0) // left
+                if (ant.direction == 3 && ant.posX-1 >= 0) // left
                 {
                     ant.posX -= 1;
                     actionList.Add(action);
@@ -607,25 +723,21 @@ public class TreeNode
 
                 int posX = ant.posX;
                 int posY = ant.posY;
-
+                
                 if (ant.direction == 0 && posY < 31 && map[posX][posY + 1] == 2) // UP direction
                 {
-                    Debug.Log("food detected");
                     actionList = leftNode.Execute(map, ant, actionList);
                 }
-                else if (ant.direction == 1 && posX < 31 && map[posX + 1][posY] == 2) // RIGHT direction
+                if (ant.direction == 1 && posX < 31 && map[posX + 1][posY] == 2) // RIGHT direction
                 {
-                    Debug.Log("food detected");
                     actionList = leftNode.Execute(map, ant, actionList);
                 }
-                else if (ant.direction == 2 && posY > 0 && map[posX][posY - 1] == 2) // BOTTOM direction
+                if (ant.direction == 2 && posY > 0 && map[posX][posY - 1] == 2) // BOTTOM direction
                 {
-                    Debug.Log("food detected");
                     actionList = leftNode.Execute(map, ant, actionList);
                 }
-                else if (ant.direction == 3 && posX > 0 && map[posX - 1][posY] == 2) // LEFT direction
+                if (ant.direction == 3 && posX > 0 && map[posX - 1][posY] == 2) // LEFT direction
                 {
-                    Debug.Log("food detected");
                     actionList = leftNode.Execute(map, ant, actionList);
                 }
                 else
@@ -642,6 +754,17 @@ public class TreeNode
 
                 actionList = leftNode.Execute(map, ant, actionList);
                 actionList = rightNode.Execute(map, ant, actionList);
+                break;
+            }
+            case "PROGN3":
+            {
+                TreeNode leftNode = children[0];
+                TreeNode rightNode = children[1];
+                TreeNode bonusNode = children[2];
+                
+                actionList = leftNode.Execute(map, ant, actionList);
+                actionList = rightNode.Execute(map, ant, actionList);
+                actionList = bonusNode.Execute(map, ant, actionList);
                 break;
             }
         }

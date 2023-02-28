@@ -10,7 +10,7 @@ public class Ant
     public int posX;
     public int posY;
 
-    public int direction = 2; // 1 : top, 2 : right, 3 : bottom, 4 : left
+    public int direction; // 1 : top, 2 : right, 3 : bottom, 4 : left
     
     public Ant(int startX, int startY)
     {
@@ -18,5 +18,6 @@ public class Ant
         this.startY = startY;
         this.posX = startX;
         this.posY = startY;
+        this.direction = 1; // right
     }
 }
